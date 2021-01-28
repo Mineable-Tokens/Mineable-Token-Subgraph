@@ -1,0 +1,6 @@
+
+
+type MintCheckpoint @entity {
+  id: ID!
+  hashrate: Int!
+}

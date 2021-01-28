@@ -1,6 +1,7 @@
-type ExampleEntity @entity {
+
+
+type MintCheckpoint @entity {
   id: ID!
-  count: BigInt!
-  from: Bytes! # address
-  reward_amount: BigInt! # uint256
+  hashrate: Int!
+  difficulty: Int!
 }
