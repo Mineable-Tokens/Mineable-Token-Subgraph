@@ -1,3 +1,4 @@
+import { log } from '@graphprotocol/graph-ts'
 import { BigInt } from "@graphprotocol/graph-ts"
 import {
   _0xBitcoinToken,
@@ -42,9 +43,18 @@ export function handleMint(event: Mint): void {
 
 
   if(epochCount > BigInt.fromI32(10) ){
+
+    log.debug('Calc hashrate: {}', [epochCount.toString()])
+
+
     let pastEpochCount = epochCount.minus( BigInt.fromI32(10) )
+    log.debug('pastEpochCount: {}', [pastEpochCount.toString()])
+
+
     let pastCheckpoint = MintCheckpoint.load( pastEpochCount.toString() )
-  //  let pastCheckpointEthBlock = pastCheckpoint.blockNumber
+    if(pastCheckpoint){
+      log.debug('Past blocknumber: {}', [pastCheckpoint.blockNumber.toString()])
+
 
     let blockNumberDifference:BigInt = event.block.number.minus(pastCheckpoint.blockNumber)
 
@@ -54,6 +64,10 @@ export function handleMint(event: Mint): void {
     let hashrate:BigInt =  difficultyFactor /   block_solve_time_seconds
 
     entity.hashrate =   hashrate
+  }else{
+      log.debug('Error: No past checkpoint for: {}', [epochCount.toString()])
+  }
+
   }
 
 
