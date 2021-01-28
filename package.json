@@ -1,6 +1,6 @@
 {
   "name": "mineable-token-0xbtc",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
