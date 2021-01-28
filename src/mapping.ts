@@ -26,7 +26,11 @@ export function handleMint(event: Mint): void {
   }
 
 
-  entity.difficulty = _0xBitcoincontract.miningTarget()
+  entity.difficulty = _0xBitcoincontract.getMiningDifficulty()
+
+
+
+  let latestDifficultyPeriodStarted = _0xBitcoincontract.latestDifficultyPeriodStarted()
 
 
 /*  // BigInt and BigDecimal math are supported
