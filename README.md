@@ -3,6 +3,11 @@
 
 https://thegraph.com/docs/define-a-subgraph#data-source-templates
 
+## TODO:
+
+- Add a mapping on the Transfer method that will save entity data about 'Token Holders'
+
+
 
 ## Running a Graph Node  (https://thegraph.com/docs/quick-start#local-development)
 
@@ -15,5 +20,5 @@ docker-compose up
 ## Contributing
 See src/mapping.ts
 
-Read this 
+Read this
 https://thegraph.com/docs/assemblyscript-api#api-reference
