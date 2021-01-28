@@ -42,6 +42,15 @@ export class MintCheckpoint extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
   get hashrate(): BigInt {
     let value = this.get("hashrate");
     return value.toBigInt();
@@ -58,5 +67,59 @@ export class MintCheckpoint extends Entity {
 
   set difficulty(value: BigInt) {
     this.set("difficulty", Value.fromBigInt(value));
+  }
+
+  get epochCount(): BigInt {
+    let value = this.get("epochCount");
+    return value.toBigInt();
+  }
+
+  set epochCount(value: BigInt) {
+    this.set("epochCount", Value.fromBigInt(value));
+  }
+
+  get challengeNumber(): Bytes {
+    let value = this.get("challengeNumber");
+    return value.toBytes();
+  }
+
+  set challengeNumber(value: Bytes) {
+    this.set("challengeNumber", Value.fromBytes(value));
+  }
+
+  get maxSupplyForEra(): BigInt {
+    let value = this.get("maxSupplyForEra");
+    return value.toBigInt();
+  }
+
+  set maxSupplyForEra(value: BigInt) {
+    this.set("maxSupplyForEra", Value.fromBigInt(value));
+  }
+
+  get miningTarget(): BigInt {
+    let value = this.get("miningTarget");
+    return value.toBigInt();
+  }
+
+  set miningTarget(value: BigInt) {
+    this.set("miningTarget", Value.fromBigInt(value));
+  }
+
+  get tokensMinted(): BigInt {
+    let value = this.get("tokensMinted");
+    return value.toBigInt();
+  }
+
+  set tokensMinted(value: BigInt) {
+    this.set("tokensMinted", Value.fromBigInt(value));
+  }
+
+  get minterAddress(): Bytes {
+    let value = this.get("minterAddress");
+    return value.toBytes();
+  }
+
+  set minterAddress(value: Bytes) {
+    this.set("minterAddress", Value.fromBytes(value));
   }
 }

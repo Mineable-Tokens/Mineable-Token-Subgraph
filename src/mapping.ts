@@ -12,35 +12,59 @@ export function handleMint(event: Mint): void {
 
   let _0xBitcoincontract = _0xBitcoinToken.bind(event.address)
 
+  let epochCount = _0xBitcoincontract.epochCount()
+
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = MintCheckpoint.load(event.transaction.from.toHex())
+  let entity = MintCheckpoint.load( epochCount.toString() )
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
   if (entity == null) {
-    entity = new MintCheckpoint(event.transaction.from.toHex())
+    entity = new MintCheckpoint( epochCount.toString() )
 
     // Entity fields can be set using simple assignments
     entity.hashrate = BigInt.fromI32(0)
   }
 
+  entity.blockNumber = event.block.number
+
 
   entity.difficulty =   _0xBitcoincontract.getMiningDifficulty()
+  entity.epochCount =   epochCount
+  entity.challengeNumber =   _0xBitcoincontract.getChallengeNumber()
+  entity.maxSupplyForEra =   _0xBitcoincontract.maxSupplyForEra()
+  entity.miningTarget =   _0xBitcoincontract.miningTarget()
+  entity.tokensMinted = _0xBitcoincontract.tokensMinted()
+  entity.minterAddress = event.params.from
+
+
+
+
+  if(epochCount > BigInt.fromI32(10) ){
+    let pastEpochCount = epochCount - BigInt.fromI32(10)
+    let pastCheckpoint = MintCheckpoint.load( pastEpochCount.toString() )
+  //  let pastCheckpointEthBlock = pastCheckpoint.blockNumber
+
+    let blockNumberDifference = event.block.number - pastCheckpoint.blockNumber
+
+    let eth_block_solve_seconds_est = BigInt.fromI32(15)
+    let block_solve_time_seconds = blockNumberDifference * eth_block_solve_seconds_est / BigInt.fromI32(10)
+    let difficultyFactor = entity.difficulty * BigInt.fromI32(4194304)
+    let hashrate = difficultyFactor / block_solve_time_seconds
+
+    entity.hashrate = hashrate
+  }
 
 
 
   let latestDifficultyPeriodStarted = _0xBitcoincontract.latestDifficultyPeriodStarted()
 
 
-/*  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
 
-  // Entity fields can be set based on event parameters
-  entity.from = event.params.from
-  entity.reward_amount = event.params.reward_amount*/
 
-  // Entities can be written to the store with `.save()`
+
+
   entity.save()
 
 
