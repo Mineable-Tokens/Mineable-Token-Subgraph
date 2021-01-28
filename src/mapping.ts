@@ -46,12 +46,12 @@ export function handleMint(event: Mint): void {
     let pastCheckpoint = MintCheckpoint.load( pastEpochCount.toString() )
   //  let pastCheckpointEthBlock = pastCheckpoint.blockNumber
 
-    let blockNumberDifference = event.block.number.minus(pastCheckpoint.blockNumber)
+    let blockNumberDifference:BigInt = event.block.number.minus(pastCheckpoint.blockNumber)
 
     let eth_block_solve_seconds_est:BigInt = BigInt.fromI32(15)
     let block_solve_time_seconds:BigInt =   (blockNumberDifference.times(eth_block_solve_seconds_est)) / (BigInt.fromI32(10))
     let difficultyFactor:BigInt = entity.difficulty.times(BigInt.fromI32(4194304))
-    let hashrate:BigInt =  difficultyFactor /   block_solve_time_seconds  
+    let hashrate:BigInt =  difficultyFactor /   block_solve_time_seconds
 
     entity.hashrate =   hashrate
   }
