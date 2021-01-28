@@ -2,6 +2,6 @@
 
 type MintCheckpoint @entity {
   id: ID!
-  hashrate: Int!
-  difficulty: Int!
+  hashrate: BigInt!
+  difficulty: BigInt!
 }

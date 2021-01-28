@@ -42,21 +42,21 @@ export class MintCheckpoint extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get hashrate(): i32 {
+  get hashrate(): BigInt {
     let value = this.get("hashrate");
-    return value.toI32();
+    return value.toBigInt();
   }
 
-  set hashrate(value: i32) {
-    this.set("hashrate", Value.fromI32(value));
+  set hashrate(value: BigInt) {
+    this.set("hashrate", Value.fromBigInt(value));
   }
 
-  get difficulty(): i32 {
+  get difficulty(): BigInt {
     let value = this.get("difficulty");
-    return value.toI32();
+    return value.toBigInt();
   }
 
-  set difficulty(value: i32) {
-    this.set("difficulty", Value.fromI32(value));
+  set difficulty(value: BigInt) {
+    this.set("difficulty", Value.fromBigInt(value));
   }
 }

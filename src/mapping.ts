@@ -22,11 +22,11 @@ export function handleMint(event: Mint): void {
     entity = new MintCheckpoint(event.transaction.from.toHex())
 
     // Entity fields can be set using simple assignments
-    entity.hashrate = 0
+    entity.hashrate = BigInt.fromI32(0)
   }
 
 
-  entity.difficulty = _0xBitcoincontract.getMiningDifficulty()
+  entity.difficulty =   _0xBitcoincontract.getMiningDifficulty()
 
 
 
