@@ -1,9 +1,9 @@
-
-
 type MintCheckpoint @entity {
   id: ID!
   blockNumber: BigInt!
-  hashrate: BigInt!
+  hashrate16: BigInt!
+  hashrate128: BigInt!
+  hashrate1024: BigInt!
 
   difficulty: BigInt!
   epochCount: BigInt!
@@ -12,4 +12,11 @@ type MintCheckpoint @entity {
   miningTarget: BigInt!
   tokensMinted: BigInt!
   minterAddress: Bytes!
+}
+
+type TokenHolder @entity {
+  id: ID!
+  balance: BigInt!
+  address: Bytes!
+
 }

@@ -1,5 +1,6 @@
 import { log } from '@graphprotocol/graph-ts'
 import { BigInt } from "@graphprotocol/graph-ts"
+import { store } from '@graphprotocol/graph-ts'
 import {
   _0xBitcoinToken,
   Mint,
@@ -7,7 +8,7 @@ import {
   Transfer,
   Approval
 } from "../generated/_0xBitcoinToken/_0xBitcoinToken"
-import { MintCheckpoint } from "../generated/schema"
+import { MintCheckpoint, TokenHolder } from "../generated/schema"
 
 export function handleMint(event: Mint): void {
 
@@ -24,8 +25,8 @@ export function handleMint(event: Mint): void {
   if (entity == null) {
     entity = new MintCheckpoint( epochCount.toString() )
 
-    // Entity fields can be set using simple assignments
-    entity.hashrate = BigInt.fromI32(0)
+
+
   }
 
   entity.blockNumber = event.block.number
@@ -42,37 +43,16 @@ export function handleMint(event: Mint): void {
 
 
 
-  if(epochCount > BigInt.fromI32(10) ){
-
-    log.debug('Calc hashrate: {}', [epochCount.toString()])
-
-
-    let pastEpochCount = epochCount.minus( BigInt.fromI32(10) )
-    log.debug('pastEpochCount: {}', [pastEpochCount.toString()])
-
-
-    let pastCheckpoint = MintCheckpoint.load( pastEpochCount.toString() )
-    if(pastCheckpoint){
-      log.debug('Past blocknumber: {}', [pastCheckpoint.blockNumber.toString()])
-
-
-    let blockNumberDifference:BigInt = event.block.number.minus(pastCheckpoint.blockNumber)
-
-    let eth_block_solve_seconds_est:BigInt = BigInt.fromI32(15)
-    let block_solve_time_seconds:BigInt =   (blockNumberDifference.times(eth_block_solve_seconds_est)) / (BigInt.fromI32(10))
-    let difficultyFactor:BigInt = entity.difficulty.times(BigInt.fromI32(4194304))
-    let hashrate:BigInt =  difficultyFactor /   block_solve_time_seconds
-
-    entity.hashrate =   hashrate
-  }else{
-      log.debug('Error: No past checkpoint for: {}', [epochCount.toString()])
-  }
-
-  }
 
 
 
-  let latestDifficultyPeriodStarted = _0xBitcoincontract.latestDifficultyPeriodStarted()
+  entity.hashrate16 = computeHashrateOverAverage(entity, 16 )
+  entity.hashrate128 = computeHashrateOverAverage(entity, 128 )
+  entity.hashrate1024 = computeHashrateOverAverage(entity, 1024 )
+
+
+
+  //let latestDifficultyPeriodStarted = _0xBitcoincontract.latestDifficultyPeriodStarted()
 
 
 
@@ -138,6 +118,75 @@ export function handleMint(event: Mint): void {
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
-export function handleTransfer(event: Transfer): void {}
+export function handleTransfer(event: Transfer): void {
+
+  let _0xBitcoincontract = _0xBitcoinToken.bind(event.address)
+
+  let senderAddress = event.params.from
+  let recipientAddress = event.params.to
+
+  // Entities can be loaded from the store using a string ID; this ID
+  // needs to be unique across all entities of the same type
+  let entity = TokenHolder.load( recipientAddress.toString() )
+
+  // Entities only exist after they have been saved to the store;
+  // `null` checks allow to create entities on demand
+  if (entity == null) {
+    entity = new TokenHolder( recipientAddress.toString() )
+  }
+
+
+  let recipientBalance = _0xBitcoincontract.balanceOf( recipientAddress )
+  let senderBalance = _0xBitcoincontract.balanceOf( recipientAddress )
+
+  //delete holder records with empty balances
+  if(senderBalance == BigInt.fromI32(0) ){
+      store.remove('TokenHolder', senderAddress.toString())
+  }
+
+  if(recipientBalance > BigInt.fromI32(0)){
+    entity.balance = recipientBalance
+    entity.address = recipientAddress
+
+    entity.save()
+  }
+
+
+
+}
 
 export function handleApproval(event: Approval): void {}
+
+function computeHashrateOverAverage(entity: MintCheckpoint | null, blockSpan: i32): BigInt {
+
+  if(entity){
+
+      let epochCount = entity.epochCount
+
+
+      log.debug('Calc hashrate: {}', [epochCount.toString()])
+
+
+      let pastEpochCount = epochCount.minus( BigInt.fromI32(blockSpan) )
+      //log.debug('pastEpochCount: {}', [pastEpochCount.toString()])
+
+
+      let pastCheckpoint = MintCheckpoint.load( pastEpochCount.toString() )
+      if(pastCheckpoint){
+      //  log.debug('Past blocknumber: {}', [pastCheckpoint.blockNumber.toString()])
+
+
+      let blockNumberDifference:BigInt = entity.blockNumber.minus(pastCheckpoint.blockNumber)
+
+      let eth_block_solve_seconds_est:BigInt = BigInt.fromI32(15)
+      let block_solve_time_seconds:BigInt =   (blockNumberDifference.times(eth_block_solve_seconds_est)) / (BigInt.fromI32(blockSpan))
+      let difficultyFactor:BigInt = entity.difficulty.times(BigInt.fromI32(4194304))
+      let hashrate:BigInt =  difficultyFactor /   block_solve_time_seconds
+
+      return hashrate
+
+      }
+    }
+
+  return BigInt.fromI32(0)
+}

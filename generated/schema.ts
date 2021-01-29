@@ -51,13 +51,31 @@ export class MintCheckpoint extends Entity {
     this.set("blockNumber", Value.fromBigInt(value));
   }
 
-  get hashrate(): BigInt {
-    let value = this.get("hashrate");
+  get hashrate16(): BigInt {
+    let value = this.get("hashrate16");
     return value.toBigInt();
   }
 
-  set hashrate(value: BigInt) {
-    this.set("hashrate", Value.fromBigInt(value));
+  set hashrate16(value: BigInt) {
+    this.set("hashrate16", Value.fromBigInt(value));
+  }
+
+  get hashrate128(): BigInt {
+    let value = this.get("hashrate128");
+    return value.toBigInt();
+  }
+
+  set hashrate128(value: BigInt) {
+    this.set("hashrate128", Value.fromBigInt(value));
+  }
+
+  get hashrate1024(): BigInt {
+    let value = this.get("hashrate1024");
+    return value.toBigInt();
+  }
+
+  set hashrate1024(value: BigInt) {
+    this.set("hashrate1024", Value.fromBigInt(value));
   }
 
   get difficulty(): BigInt {
@@ -121,5 +139,54 @@ export class MintCheckpoint extends Entity {
 
   set minterAddress(value: Bytes) {
     this.set("minterAddress", Value.fromBytes(value));
+  }
+}
+
+export class TokenHolder extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save TokenHolder entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save TokenHolder entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("TokenHolder", id.toString(), this);
+  }
+
+  static load(id: string): TokenHolder | null {
+    return store.get("TokenHolder", id) as TokenHolder | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get balance(): BigInt {
+    let value = this.get("balance");
+    return value.toBigInt();
+  }
+
+  set balance(value: BigInt) {
+    this.set("balance", Value.fromBigInt(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
   }
 }
