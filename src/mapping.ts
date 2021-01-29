@@ -42,28 +42,29 @@ export function handleMint(event: Mint): void {
 
 
 
-
-
-
-
   entity.hashrate16 = computeHashrateOverAverage(entity, 16 )
   entity.hashrate128 = computeHashrateOverAverage(entity, 128 )
   entity.hashrate1024 = computeHashrateOverAverage(entity, 1024 )
-
-
-
-  //let latestDifficultyPeriodStarted = _0xBitcoincontract.latestDifficultyPeriodStarted()
-
-
-
-
 
 
   entity.save()
 
 
 
+  let tokenHolder = TokenHolder.load( entity.minterAddress.toString() )
+  if (tokenHolder == null) {
+    tokenHolder = new TokenHolder( entity.minterAddress.toString() )
+  }
 
+  let recipientAddress = event.params.from
+  let recipientBalance = _0xBitcoincontract.balanceOf( recipientAddress )
+
+  if(recipientBalance > BigInt.fromI32(0)){
+    tokenHolder.balance = recipientBalance
+    tokenHolder.address = recipientAddress
+
+    tokenHolder.save()
+  }
 
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
@@ -127,12 +128,12 @@ export function handleTransfer(event: Transfer): void {
 
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = TokenHolder.load( recipientAddress.toString() )
+  let tokenHolder = TokenHolder.load( recipientAddress.toHexString() )
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new TokenHolder( recipientAddress.toString() )
+  if (tokenHolder == null) {
+    tokenHolder = new TokenHolder( recipientAddress.toHexString() )
   }
 
 
@@ -141,22 +142,29 @@ export function handleTransfer(event: Transfer): void {
 
   //delete holder records with empty balances
   if(senderBalance == BigInt.fromI32(0) ){
-      store.remove('TokenHolder', senderAddress.toString())
+      store.remove('TokenHolder', senderAddress.toHexString())
   }
 
   if(recipientBalance > BigInt.fromI32(0)){
-    entity.balance = recipientBalance
-    entity.address = recipientAddress
+    tokenHolder.balance = recipientBalance
+    tokenHolder.address = recipientAddress
 
-    entity.save()
+    tokenHolder.save()
   }
-
 
 
 }
 
+
+
 export function handleApproval(event: Approval): void {}
 
+
+function updateHolderBalance( recipientAddress: Bytes | null ): void{
+
+
+
+}
 function computeHashrateOverAverage(entity: MintCheckpoint | null, blockSpan: i32): BigInt {
 
   if(entity){
