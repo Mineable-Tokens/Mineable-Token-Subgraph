@@ -12,11 +12,14 @@ type MintCheckpoint @entity {
   miningTarget: BigInt!
   tokensMinted: BigInt!
   minterAddress: Bytes!
+
+  unixTimestamp: BigInt!
 }
 
 type TokenHolder @entity {
   id: ID!
   balance: BigInt!
   address: Bytes!
+  blockNumber: BigInt!
 
 }

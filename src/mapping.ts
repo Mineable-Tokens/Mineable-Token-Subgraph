@@ -46,6 +46,8 @@ export function handleMint(event: Mint): void {
   entity.hashrate128 = computeHashrateOverAverage(entity, 128 )
   entity.hashrate1024 = computeHashrateOverAverage(entity, 1024 )
 
+  entity.unixTimestamp = event.block.timestamp
+
 
   entity.save()
 
@@ -62,6 +64,7 @@ export function handleMint(event: Mint): void {
   if(recipientBalance > BigInt.fromI32(0)){
     tokenHolder.balance = recipientBalance
     tokenHolder.address = recipientAddress
+    tokenHolder.blockNumber = event.block.number
 
     tokenHolder.save()
   }
@@ -148,6 +151,7 @@ export function handleTransfer(event: Transfer): void {
   if(recipientBalance > BigInt.fromI32(0)){
     tokenHolder.balance = recipientBalance
     tokenHolder.address = recipientAddress
+    tokenHolder.blockNumber = event.block.number
 
     tokenHolder.save()
   }

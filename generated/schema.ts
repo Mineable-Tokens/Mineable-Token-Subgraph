@@ -140,6 +140,15 @@ export class MintCheckpoint extends Entity {
   set minterAddress(value: Bytes) {
     this.set("minterAddress", Value.fromBytes(value));
   }
+
+  get unixTimestamp(): BigInt {
+    let value = this.get("unixTimestamp");
+    return value.toBigInt();
+  }
+
+  set unixTimestamp(value: BigInt) {
+    this.set("unixTimestamp", Value.fromBigInt(value));
+  }
 }
 
 export class TokenHolder extends Entity {
@@ -188,5 +197,14 @@ export class TokenHolder extends Entity {
 
   set address(value: Bytes) {
     this.set("address", Value.fromBytes(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
   }
 }
