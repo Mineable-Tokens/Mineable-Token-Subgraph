@@ -137,7 +137,7 @@ export function handleTransfer(event: Transfer): void {
 
 
   let recipientBalance = _0xBitcoincontract.balanceOf( recipientAddress )
-  let senderBalance = _0xBitcoincontract.balanceOf( recipientAddress )
+  let senderBalance = _0xBitcoincontract.balanceOf( senderAddress )
 
   //delete holder records with empty balances
   if(senderBalance == BigInt.fromI32(0) ){
