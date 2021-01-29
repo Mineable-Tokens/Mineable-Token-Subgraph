@@ -51,9 +51,9 @@ export function handleMint(event: Mint): void {
 
 
 
-  let tokenHolder = TokenHolder.load( entity.minterAddress.toString() )
+  let tokenHolder = TokenHolder.load( entity.minterAddress.toHexString() )
   if (tokenHolder == null) {
-    tokenHolder = new TokenHolder( entity.minterAddress.toString() )
+    tokenHolder = new TokenHolder( entity.minterAddress.toHexString() )
   }
 
   let recipientAddress = event.params.from
